@@ -1,37 +1,17 @@
 const express = require('express');
-const { getTopics, getArticlesById } = require('./controllers/controllers')
-console.log(getTopics)
+const { getTopics } = require('./controllers/topicControllers')
+const { getArticleById } = require('./controllers/articleControllers')
+const {error404, customError, psqlError, error500} = require('./errors/errors')
 const app = express();
 
 app.get('/api/topics', getTopics);
-app.get('/api/articles/:article_id', getArticlesById);
+app.get('/api/articles/:article_id', getArticleById);
 
-app.all('/*', (req, res) => {
-  res.status(404).send({ message: 'Path not found.'});
-});
+app.all('/*', error404)
 
-// ---- custom errors ----
-app.use((err, req, res, next) => {
-  if( err.status && err.msg) {
-    res.status(err.status).send({ message: err.msg })
-  } else {
-    next(err) // don't forget this moves you down to next app block
-  }
-})
+app.use(customError)
+app.use(psqlError)
+app.use(error500)
 
-// ---- PSQL errors ----
-app.use((err, req, res, next) => {
-  if (err.code === "22P02") {
-    res.status(400).send({ message: 'Bad request.'})
-  }  else {
-    next(err)
-  }
-})
-
-// ---- final error! ----
-app.use((err, req, res, next) => {
-  console.log(err);
-  res.status(500).send('Server Error!');
-});
 
 module.exports = app;
