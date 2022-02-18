@@ -51,19 +51,19 @@ describe('ARTICLE_ID', () => {
   describe('GET /api/articles/:article_id', () => {
     test('status 200: returns an article object with specified properties', () => {
       return request(app)
-      .get('/api/articles/1')
+      .get('/api/articles/1') // ---- as askng for article 1, results should match 1 
       .expect(200)
       .then(({body: {article}}) => {
           expect(article).toBeInstanceOf(Object)
           expect(article).toEqual(
               expect.objectContaining({
-                  author: expect.any(String),
-                  title: expect.any(String),
-                  article_id: expect.any(Number),
-                  body: expect.any(String),
-                  topic: expect.any(String),
-                  created_at: expect.any(String),
-                  votes: expect.any(Number)
+                article_id: 1,
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                author: "butter_bridge",
+                body: "I find this existence challenging",
+                created_at: expect.any(String),
+                votes: 100,
               })
           )
       })
@@ -76,7 +76,7 @@ describe('ERRORS: /api/articles/:article_id', () => {
       .get('/api/articles/15')
       .expect(404)
       .then((res) => {
-        expect(res.body.message).toBe(`Path not found.`);
+        expect(res.body.message).toBe(`Article id not found. Please check and try again :)`);
       });
   });
   test(`status: 400 - returns invalid error message if id is not input as a number`, () => {
@@ -84,7 +84,7 @@ describe('ERRORS: /api/articles/:article_id', () => {
       .get('/api/articles/notanumber')
       .expect(400)
       .then((res) => {
-        expect(res.body.message).toBe('Bad request.');
+        expect(res.body.message).toBe('Not a valid article id. Please check your id number and try again');
       });
   });
 });
