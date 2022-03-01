@@ -14,9 +14,8 @@ afterAll(() => {
 });
 
 
-describe('TOPICS', () => {
-  // ---- GETS ----
-  describe('GET /api/topics', () => {
+describe('GET/api/topics', () => {
+  describe('GET', () => {
     test('status 200: returns an array of topic objects with a key of slug and description', () => {
        return request(app)
        .get("/api/topics")
@@ -32,8 +31,7 @@ describe('TOPICS', () => {
        })
     })
   });
-// ---- ERRORS ----
-describe('ERRORS /api/topics', () => {
+describe('ERRORS', () => {
   test(`status: 404 - returns a path not found message if topic doesn't exist`, () => {
     return request(app)
       .get('/api/jibberish')
@@ -46,9 +44,8 @@ describe('ERRORS /api/topics', () => {
 });
 
 
-describe('ARTICLE_ID', () => {
-  // ---- GETS ----
-  describe('GET /api/articles/:article_id', () => {
+describe('GET/api/articles/:article_id', () => {
+  describe('GET', () => {
     test('status 200: returns an article object with specified properties', () => {
       return request(app)
       .get('/api/articles/1') // ---- as askng for article 1, results should match 1 
@@ -68,9 +65,8 @@ describe('ARTICLE_ID', () => {
           )
       })
   });
-  // ---- ERRORS ----
 });
-describe('ERRORS: /api/articles/:article_id', () => {
+describe('ERRORS', () => {
   test(`status: 404 - returns a path not found message if article id doesn't exist`, () => {
     return request(app)
       .get('/api/articles/15')
@@ -88,4 +84,50 @@ describe('ERRORS: /api/articles/:article_id', () => {
       });
   });
 });
+});
+
+
+describe('PATCH/api/articles/:article_id', () => {
+  describe('PATCH', () => {
+      test('status: 200 - updates article votees by an increment of 1', () => {
+        return request(app)
+          .patch('/api/articles/1')
+          .send({ inc_votes: 1 })
+          .expect(200)
+          .then((res) => {
+            const {article} = res.body
+            expect(article).toEqual(
+              expect.objectContaining({
+                article_id: 1,
+                title: 'Living in the shadow of a great man',
+                topic: 'mitch',
+                author: 'butter_bridge',
+                body: 'I find this existence challenging',
+                created_at: expect.any(String),
+                votes: 101,
+              })
+              );
+          });
+      });
+    });
+    describe('ERRORS', () => {
+      test(`status: 404 - returns a path not found message if article id doesn't exist`, () => {
+        return request(app)
+        .patch('/api/articles/15')
+        .send({ inc_votes: 1 })
+          .expect(404)
+          .then((res) => {
+            expect(res.body.message).toBe(`Article id not found. Please check and try again :)`);
+          });
+      });
+      test(`status: 400 - returns invalid error message if id is not input as a number`, () => {
+        return request(app)
+          .patch('/api/articles/notanumber')
+          .send({ inc_votes: 1 })
+          .expect(400)
+          .then((res) => {
+            expect(res.body.message).toBe('Not a valid article id. Please check your id number and try again');
+          });
+      });
+    });
 });
