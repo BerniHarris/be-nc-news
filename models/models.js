@@ -1,4 +1,5 @@
 const db = require('../db/connection'); 
+const topics = require('../db/data/test-data/topics');
 
 const fetchTopics = () => {
     return db
@@ -42,7 +43,17 @@ const updateArticle = (article_id, inc_votes) => {
           });
       };
 
+const fetchUserNames = () => {
+    return db
+    .query("SELECT username FROM users;")
+    .then(({rows}) => {
+        return rows
+    });
+};
 
 
+// Model: Handles the fetching, updating, creating and deleting of data, 
+// and sends the data in the required format to the controller based on controller’s 
+// instructions.
 
-module.exports = {fetchTopics, fetchArticleById, updateArticle} 
+module.exports = {fetchTopics, fetchArticleById, updateArticle, fetchUserNames} 

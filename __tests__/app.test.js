@@ -43,7 +43,6 @@ describe('ERRORS', () => {
 });
 });
 
-
 describe('GET/api/articles/:article_id', () => {
   describe('GET', () => {
     test('status 200: returns an article object with specified properties', () => {
@@ -85,7 +84,6 @@ describe('ERRORS', () => {
   });
 });
 });
-
 
 describe('PATCH/api/articles/:article_id', () => {
   describe('PATCH', () => {
@@ -131,3 +129,61 @@ describe('PATCH/api/articles/:article_id', () => {
       });
     });
 });
+
+describe('GET/api/users', () => {
+  test("status: 200 - should return an array of users objects with a length of 4", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.length).toEqual(4);
+      });
+  });
+  test("status: 200 - each user object should contain the property of username", () => {
+    return request(app)
+    .get('/api/users/')
+    .expect(200)
+    .then((res) => {
+      console.log(res.body)
+      res.body.forEach((user) => {
+        expect(user).toEqual(
+          expect.objectContaining({
+            username: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+});
+
+// describe('GET/api/articles', () => {
+  
+// });
+
+// describe('GET/api/articles/:article:id (comment count)', () => {
+  
+// });
+
+// describe('GET/api/articles/:article_id/comments', () => {
+  
+// });
+
+// describe('GET/api/articles (comment count)', () => {
+  
+// });
+
+// describe('POST/api/articles/:article_id/comments', () => {
+  
+// });
+
+// describe('GET/api/articles (queries)', () => {
+  
+// });
+
+// describe('DELETE/api/comments/:comment_id', () => {
+  
+// });
+
+// describe('GET/api', () => {
+  
+// });
