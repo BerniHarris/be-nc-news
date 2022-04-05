@@ -199,30 +199,55 @@ describe("GET/api/articles", () => {
   });
 });
 
-// describe('GET/api/articles/:article:id (comment count)', () => {
-
-// });
-
-// describe('GET/api/articles/:article_id/comments', () => {
-
-// });
-
-// describe('GET/api/articles (comment count)', () => {
-
-// });
-
-// describe('POST/api/articles/:article_id/comments', () => {
-
-// });
-
-// describe('GET/api/articles (queries)', () => {
-
-// });
-
-// describe('DELETE/api/comments/:comment_id', () => {
-
-// });
-
-// describe('GET/api', () => {
-
-// });
+describe("GET/api/articles/:article_id/comments", () => {
+  describe("GET", () => {
+    test("status 200: returns an array of comment objects for the given id", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(
+            body["comments"].forEach((comment) => {
+              expect(comment).toEqual(
+                expect.objectContaining({
+                  comment_id: expect.any(Number),
+                  votes: expect.any(Number),
+                  created_at: expect.any(String),
+                  author: expect.any(String),
+                  body: expect.any(String),
+                })
+              );
+            })
+          );
+        });
+    });
+    test("status 200: returns an empty array if valid article id is requested but article has no comments", () => {
+      return request(app)
+        .get("/api/articles/7/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comments).toEqual([]);
+        });
+    });
+  });
+  describe("ERRORS", () => {
+    test("status 404: returns a not found error if valid id is requested but article does not exist", () => {
+      return request(app)
+        .get("/api/articles/3000/comments")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.message).toBe("Article not found");
+        });
+    });
+    test("status 400: returns an error if article id is invalid", () => {
+      return request(app)
+        .get("/api/articles/invalid/comments")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.message).toBe(
+            "Not a valid article id. Please check your id number and try again"
+          );
+        });
+    });
+  });
+});
