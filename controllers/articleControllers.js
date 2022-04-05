@@ -2,6 +2,8 @@ const {
   fetchArticleById,
   updateArticle,
   fetchArticles,
+  checkArticleExists,
+  fetchCommentsByArticleId,
 } = require("../models/models");
 
 const getArticleById = (req, res, next) => {
@@ -38,9 +40,25 @@ const getArticles = (req, res, next) => {
     });
 };
 
+const getArticleComments = (req, res, next) => {
+  const { article_id } = req.params;
+  Promise.all([
+    fetchCommentsByArticleId(article_id),
+    checkArticleExists(article_id),
+  ])
+    .then(([comments]) => {
+      res.status(200).send({ comments });
+    })
+    .catch(next);
+};
 // Controller: Handles the client request, and using the information contained
 // on the request (path, params, queries and body) will invoke the model which
 // will interact with the dataset, and will then send a response to the client
 // with the appropriate data.
 
-module.exports = { getArticleById, patchArticle, getArticles };
+module.exports = {
+  getArticleById,
+  patchArticle,
+  getArticles,
+  getArticleComments,
+};

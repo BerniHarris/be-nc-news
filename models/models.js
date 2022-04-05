@@ -60,6 +60,32 @@ const fetchArticles = () => {
   });
 };
 
+const checkArticleExists = (article_id) => {
+  return db
+    .query("SELECT * FROM articles WHERE article_id = $1;", [article_id])
+    .then(({ rows }) => {
+      if (rows.length === 0)
+        return Promise.reject({
+          status: 404,
+          msg: "Article not found",
+        });
+      else return rows;
+    });
+};
+
+const fetchCommentsByArticleId = (article_id) => {
+  return db
+    .query(
+      `
+  SELECT comment_id, votes, created_at, author, body
+  FROM comments
+  WHERE article_id = $1;`,
+      [article_id]
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+};
 // Model: Handles the fetching, updating, creating and deleting of data,
 // and sends the data in the required format to the controller based on controller’s
 // instructions.
@@ -70,4 +96,6 @@ module.exports = {
   updateArticle,
   fetchUserNames,
   fetchArticles,
+  checkArticleExists,
+  fetchCommentsByArticleId,
 };
