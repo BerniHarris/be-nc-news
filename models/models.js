@@ -55,9 +55,11 @@ const fetchUserNames = () => {
 };
 
 const fetchArticles = () => {
-  return db.query("SELECT * FROM articles;").then(({ rows }) => {
-    return { articles: rows };
-  });
+  return db
+    .query("SELECT * FROM articles ORDER BY created_at DESC;")
+    .then(({ rows }) => {
+      return { articles: rows };
+    });
 };
 
 const checkArticleExists = (article_id) => {

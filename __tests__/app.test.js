@@ -166,12 +166,13 @@ describe("GET/api/users", () => {
 
 describe("GET/api/articles", () => {
   describe("GET", () => {
-    test("status 200: returns an array of article objects with specified properties", () => {
+    test.only("status 200: returns an array of article objects with specified properties", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
         .then((res) => {
           expect(res.body.articles.length).toBe(12);
+          console.log(res.body.articles);
           res.body.articles.forEach((article) => {
             expect(article).toEqual(
               expect.objectContaining({
