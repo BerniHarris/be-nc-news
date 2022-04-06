@@ -166,13 +166,12 @@ describe("GET/api/users", () => {
 
 describe("GET/api/articles", () => {
   describe("GET", () => {
-    test.only("status 200: returns an array of article objects with specified properties", () => {
+    test("status 200: returns an array of article objects with specified properties", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
         .then((res) => {
           expect(res.body.articles.length).toBe(12);
-          console.log(res.body.articles);
           res.body.articles.forEach((article) => {
             expect(article).toEqual(
               expect.objectContaining({
@@ -248,6 +247,38 @@ describe("GET/api/articles/:article_id/comments", () => {
           expect(body.message).toBe(
             "Not a valid article id. Please check your id number and try again"
           );
+        });
+    });
+  });
+});
+
+describe("GET/api/articles/:article:id comment count", () => {
+  describe("GET", () => {
+    test("Status 200: returns an article containing a comment_count property", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then((res) => {
+          console.log(res.body.article);
+          expect(res.body.article.comment_count).toEqual(11);
+        });
+    });
+    test("Status 200: returns an article containing 0 comment counts if the article has no comments", () => {
+      return request(app)
+        .get("/api/articles/7")
+        .expect(200)
+        .then((res) => {
+          console.log(res.body.article);
+          expect(res.body.article.comment_count).toEqual(0);
+        });
+    });
+    test("Status 200: returns a number as a comment_count", () => {
+      return request(app)
+        .get("/api/articles/9")
+        .expect(200)
+        .then((res) => {
+          console.log(res.body.article);
+          expect(res.body.article.comment_count).toEqual(expect.any(Number));
         });
     });
   });
