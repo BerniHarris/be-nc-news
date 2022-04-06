@@ -3,8 +3,9 @@ const {
   updateArticle,
   fetchArticles,
   checkArticleExists,
-  fetchCommentsByArticleId,
-} = require("../models/models");
+} = require("../models/articleModels");
+
+const { fetchCommentsByArticleId } = require("../models/commentModels");
 
 const getArticleById = (req, res, next) => {
   const { article_id: articleId } = req.params;
