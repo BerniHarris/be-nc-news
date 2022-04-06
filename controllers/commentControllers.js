@@ -1,4 +1,7 @@
-const { fetchCommentsByArticleId } = require("../models/commentModels");
+const {
+  fetchCommentsByArticleId,
+  addCommentToArticleId,
+} = require("../models/commentModels");
 const { checkArticleExists } = require("../models/articleModels");
 
 const getArticleComments = (req, res, next) => {
@@ -13,8 +16,19 @@ const getArticleComments = (req, res, next) => {
     .catch(next);
 };
 
+const postCommentToArticleId = (req, res, next) => {
+  const { article_id: article_id } = req.params;
+  const userComment = req.body;
+  addCommentToArticleId(article_id, userComment)
+    .then((comment) => {
+      res.status(201).send({ comment });
+    })
+    .catch(next);
+};
+
 module.exports = {
   getArticleComments,
+  postCommentToArticleId,
 };
 
 // Controller: Handles the client request, and using the information contained
