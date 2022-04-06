@@ -7,6 +7,7 @@ const {
   getArticleComments,
 } = require("./controllers/articleControllers");
 const { getUserNames } = require("./controllers/userControllers");
+const { postCommentToArticleId } = require("./controllers/commentControllers");
 const {
   error404,
   customError,
@@ -28,7 +29,7 @@ app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleById);
 app.patch("/api/articles/:article_id", patchArticle);
 app.get("/api/articles/:article_id/comments", getArticleComments);
-app.post("/api/articles/:article_id/comments", getArticleById);
+app.post("/api/articles/:article_id/comments", postCommentToArticleId);
 
 //-------ALL------
 app.all("/*", error404);
