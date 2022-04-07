@@ -15,16 +15,21 @@ const fetchCommentsByArticleId = (article_id) => {
     });
 };
 
-// app.post("/expressions", (req, res, next) => {
-//   const receivedExpression = createElement("expressions", req.query);
-//   if (receivedExpression) {
-//     expressions.push(receivedExpression);
-//     res.status(201).send(receivedExpression);
-//   } else {
-//     res.status(400).send();
-//   }
-// });
+const addCommentToArticleId = (article_id, { username: author, body }) => {
+  return db
+    .query(
+      `INSERT INTO comments
+    (article_id, author, body)
+    Values ($1, $2, $3)
+    RETURNING *;`,
+      [article_id, author, body]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
 
 module.exports = {
   fetchCommentsByArticleId,
+  addCommentToArticleId,
 };

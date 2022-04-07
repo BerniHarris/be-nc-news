@@ -206,9 +206,9 @@ describe("GET/api/articles/:article_id/comments", () => {
       return request(app)
         .get("/api/articles/1/comments")
         .expect(200)
-        .then(({ body }) => {
+        .then((res) => {
           expect(
-            body["comments"].forEach((comment) => {
+            res.body["comments"].forEach((comment) => {
               expect(comment).toEqual(
                 expect.objectContaining({
                   comment_id: expect.any(Number),
@@ -226,8 +226,8 @@ describe("GET/api/articles/:article_id/comments", () => {
       return request(app)
         .get("/api/articles/7/comments")
         .expect(200)
-        .then(({ body }) => {
-          expect(body.comments).toEqual([]);
+        .then((res) => {
+          expect(res.body.comments).toEqual([]);
         });
     });
   });
@@ -236,16 +236,16 @@ describe("GET/api/articles/:article_id/comments", () => {
       return request(app)
         .get("/api/articles/3000/comments")
         .expect(404)
-        .then(({ body }) => {
-          expect(body.message).toBe("Article not found");
+        .then((res) => {
+          expect(res.body.message).toBe("Article not found");
         });
     });
     test("status 400: returns an error if article id is invalid", () => {
       return request(app)
         .get("/api/articles/invalid/comments")
         .expect(400)
-        .then(({ body }) => {
-          expect(body.message).toBe(
+        .then((res) => {
+          expect(res.body.message).toBe(
             "Not a valid article id. Please check your id number and try again"
           );
         });
@@ -277,6 +277,73 @@ describe("GET/api/articles/:article:id comment count", () => {
         .expect(200)
         .then((res) => {
           expect(res.body.article.comment_count).toEqual(expect.any(Number));
+        });
+    });
+  });
+});
+
+describe("POST /api/articles/:article_id/comments", () => {
+  describe("POST", () => {
+    test("status 201: returns a posted comment", () => {
+      const userComment = {
+        username: "butter_bridge",
+        body: "I am finding this very easy to understand",
+      };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(userComment)
+        .expect(201)
+        .then((res) => {
+          expect(res.body.comment).toEqual(
+            expect.objectContaining({
+              comment_id: 19,
+              article_id: 1,
+              author: "butter_bridge",
+              body: "I am finding this very easy to understand",
+              votes: 0,
+              created_at: expect.any(String),
+            })
+          );
+        });
+    });
+  });
+  describe("ERRORS", () => {
+    test("status 400: returns error if no body and username are included in the comment", () => {
+      const userComment = {};
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send(userComment)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.message).toBe(
+            `Don't forget to include your username and comment body!`
+          );
+        });
+    });
+    test("status 404: returns error if username doesn't exist", () => {
+      const userComment = {
+        username: "Berni-Bobs",
+        body: "Peice of cake",
+      };
+      return request(app)
+        .post("/api/articles/2/comments")
+        .send(userComment)
+        .expect(404)
+        .then((res) => {
+          expect(res.body.message).toBe(`Input not found. Please try again`);
+        });
+    });
+    test("status 400: returns a not found error if the article id is valid but does not exist", () => {
+      const userComment = {
+        username: "butter_bridge",
+        body: "Actually, now is a little easier",
+      };
+      return request(app)
+        .post("/api/articles/2000/comments")
+        .send(userComment)
+        .expect(404)
+        .then((res) => {
+          expect(res.body.message).toBe(`Input not found. Please try again`);
         });
     });
   });
