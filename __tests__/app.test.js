@@ -120,7 +120,7 @@ describe("                      -------ARTICLE TESTS-------", () => {
         .expect(400)
         .then((res) => {
           expect(res.body.message).toBe(
-            "Not a valid article id. Please check your id number and try again"
+            "ID not found. Please check your id number and try again"
           );
         });
     });
@@ -166,7 +166,7 @@ describe("                      -------ARTICLE TESTS-------", () => {
         .expect(400)
         .then((res) => {
           expect(res.body.message).toBe(
-            "Not a valid article id. Please check your id number and try again"
+            "ID not found. Please check your id number and try again"
           );
         });
     });
@@ -216,7 +216,7 @@ describe("                      -------ARTICLE TESTS-------", () => {
         .expect(400)
         .then((res) => {
           expect(res.body.message).toBe(
-            "Not a valid article id. Please check your id number and try again"
+            "ID not found. Please check your id number and try again"
           );
         });
     });
@@ -400,6 +400,36 @@ describe("                      -------ARTICLE TESTS-------", () => {
         .expect(400)
         .then((res) => {
           expect(res.body.message).toBe("Invalid topic query");
+        });
+    });
+  });
+  describe("DELETE/api/comments/:comment_id", () => {
+    test("status 204: returns no content and deletes the comment by comment id", () => {
+      return request(app)
+        .delete("/api/comments/12")
+        .expect(204)
+        .then((res) => {
+          expect(res.body).toEqual({});
+        });
+    });
+  });
+  describe("ERRORS/api/comments/:comment_id", () => {
+    test("status 404: returns a not found error if a valid comment id is given but does not exist", () => {
+      return request(app)
+        .delete("/api/comments/100")
+        .expect(404)
+        .then((res) => {
+          expect(res.body.message).toBe("Comment not found");
+        });
+    });
+    test("status 400: returns a bad request error if the given id isn't valid", () => {
+      return request(app)
+        .delete("/api/comments/jibberish")
+        .expect(400)
+        .then((res) => {
+          expect(res.body.message).toBe(
+            "ID not found. Please check your id number and try again"
+          );
         });
     });
   });
