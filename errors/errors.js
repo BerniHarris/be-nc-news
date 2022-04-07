@@ -17,8 +17,7 @@ const customError = (err, req, res, next) => {
 const psqlError = (err, req, res, next) => {
   if (err.code === "22P02") {
     res.status(400).send({
-      message:
-        "Not a valid article id. Please check your id number and try again",
+      message: "ID not found. Please check your id number and try again",
     });
   } else if (err.code === "23502") {
     res.status(400).send({
