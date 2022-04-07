@@ -83,23 +83,17 @@ const fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
   ) {
     return Promise.reject({ status: 400, msg: "Invalid topic query" });
   }
-  // ------ sorting by topics ------
-  const topicSort = "";
-
-  if (topic === undefined) {
-    topicSort === "";
-  } else {
-    topicSort === `WHERE topic = '${topic}'`;
-  } // <--- if not defined then the empty string will allow all articles to be selected... if defined they will be selected by the topic
+  // ------ filter by topics ------
+  const topicSort = topic === undefined ? "" : `WHERE topic = '${topic}'`;
 
   return db
     .query(
       `SELECT articles.*, 
       COUNT(comments.article_id)::INT AS comment_count 
-      FROM articles ${topicSort}
+      FROM articles
       LEFT JOIN comments 
-      ON articles.article_id = comments.article_id 
-      GROUP BY articles.article_id 
+      ON articles.article_id = comments.article_id   
+      ${topicSort} GROUP BY articles.article_id 
       ORDER BY ${sort_by} ${order};`
     )
     .then(({ rows }) => {
