@@ -32,7 +32,8 @@ const patchArticle = (req, res, next) => {
 };
 
 const getArticles = (req, res, next) => {
-  fetchArticles()
+  const { sort_by, order, topic } = req.query;
+  fetchArticles(sort_by, order, topic)
     .then((articles) => {
       res.status(200).send(articles);
     })

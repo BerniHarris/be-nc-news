@@ -1,4 +1,5 @@
 const request = require("supertest");
+const sorted = require("jest-sorted"); // wasn't working without before
 const app = require("../app");
 const db = require("../db/connection");
 const testData = require("../db/data/test-data");
@@ -13,8 +14,9 @@ afterAll(() => {
   return db.end();
 });
 
-describe("GET/api/topics", () => {
-  describe("GET", () => {
+// ------Topic Tests-------
+describe("                      ------TOPIC TESTS------", () => {
+  describe("GET/api/topics", () => {
     test("status 200: returns an array of topic objects with a key of slug and description", () => {
       return request(app)
         .get("/api/topics")
@@ -32,7 +34,7 @@ describe("GET/api/topics", () => {
         });
     });
   });
-  describe("ERRORS", () => {
+  describe("ERRORS /api/topics", () => {
     test(`status: 404 - returns a path not found message if topic doesn't exist`, () => {
       return request(app)
         .get("/api/jibberish")
@@ -43,9 +45,44 @@ describe("GET/api/topics", () => {
     });
   });
 });
+// ------Article Tests-------
+describe("                      -------ARTICLE TESTS-------", () => {
+  // ** install "npm install --save-dev jest-sorted" to be able to test sorts! not included in Jest automatically! **
 
-describe("GET/api/articles/:article_id", () => {
-  describe("GET", () => {
+  describe("GET/api/articles", () => {
+    test("status 200: returns an array of article objects with specified properties", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles.length).toBe(12);
+          res.body.articles.forEach((article) => {
+            expect(article).toEqual(
+              expect.objectContaining({
+                author: expect.any(String),
+                title: expect.any(String),
+                article_id: expect.any(Number),
+                topic: expect.any(String),
+                created_at: expect.any(String),
+                votes: expect.any(Number),
+                comment_count: expect.any(Number),
+              })
+            );
+          });
+        });
+    });
+  });
+  describe("ERRORS for get/api/articles", () => {
+    test(`status: 404 - returns a path not found message if article doesn't exist`, () => {
+      return request(app)
+        .get("/api/jibberish")
+        .expect(404)
+        .then((res) => {
+          expect(res.body.message).toBe("Path not found.");
+        });
+    });
+  });
+  describe("GET/api/articles/:article_id", () => {
     test("status 200: returns an article object with specified properties", () => {
       return request(app)
         .get("/api/articles/1") // ---- as askng for article 1, results should match 1
@@ -66,7 +103,7 @@ describe("GET/api/articles/:article_id", () => {
         });
     });
   });
-  describe("ERRORS", () => {
+  describe("ERRORS for get/api/articles/:article_id", () => {
     test(`status: 404 - returns a path not found message if article id doesn't exist`, () => {
       return request(app)
         .get("/api/articles/15")
@@ -88,10 +125,7 @@ describe("GET/api/articles/:article_id", () => {
         });
     });
   });
-});
-
-describe("PATCH/api/articles/:article_id", () => {
-  describe("PATCH", () => {
+  describe("PATCH/api/articles/:article_id", () => {
     test("status: 200 - updates article votees by an increment of 1", () => {
       return request(app)
         .patch("/api/articles/1")
@@ -113,7 +147,7 @@ describe("PATCH/api/articles/:article_id", () => {
         });
     });
   });
-  describe("ERRORS", () => {
+  describe("ERRORS for patch/api/articles/:article_id", () => {
     test(`status: 404 - returns a path not found message if article id doesn't exist`, () => {
       return request(app)
         .patch("/api/articles/15")
@@ -137,71 +171,7 @@ describe("PATCH/api/articles/:article_id", () => {
         });
     });
   });
-});
-
-describe("GET/api/users", () => {
-  test("status: 200 - should return an array of users objects with a length of 4", () => {
-    return request(app)
-      .get("/api/users")
-      .expect(200)
-      .then((res) => {
-        expect(res.body.length).toEqual(4);
-      });
-  });
-  test("status: 200 - each user object should contain the property of username", () => {
-    return request(app)
-      .get("/api/users/")
-      .expect(200)
-      .then((res) => {
-        res.body.forEach((user) => {
-          expect(user).toEqual(
-            expect.objectContaining({
-              username: expect.any(String),
-            })
-          );
-        });
-      });
-  });
-});
-
-describe("GET/api/articles", () => {
-  describe("GET", () => {
-    test("status 200: returns an array of article objects with specified properties", () => {
-      return request(app)
-        .get("/api/articles")
-        .expect(200)
-        .then((res) => {
-          expect(res.body.articles.length).toBe(12);
-          res.body.articles.forEach((article) => {
-            expect(article).toEqual(
-              expect.objectContaining({
-                author: expect.any(String),
-                title: expect.any(String),
-                article_id: expect.any(Number),
-                topic: expect.any(String),
-                created_at: expect.any(String),
-                votes: expect.any(Number),
-                comment_count: expect.any(Number),
-              })
-            );
-          });
-        });
-    });
-  });
-  describe("ERRORS", () => {
-    test(`status: 404 - returns a path not found message if article doesn't exist`, () => {
-      return request(app)
-        .get("/api/jibberish")
-        .expect(404)
-        .then((res) => {
-          expect(res.body.message).toBe("Path not found.");
-        });
-    });
-  });
-});
-
-describe("GET/api/articles/:article_id/comments", () => {
-  describe("GET", () => {
+  describe("GET/api/articles/:article_id/comments", () => {
     test("status 200: returns an array of comment objects for the given id", () => {
       return request(app)
         .get("/api/articles/1/comments")
@@ -231,7 +201,7 @@ describe("GET/api/articles/:article_id/comments", () => {
         });
     });
   });
-  describe("ERRORS", () => {
+  describe("ERRORS for get/api/articles/:article_id/comments", () => {
     test("status 404: returns a not found error if valid id is requested but article does not exist", () => {
       return request(app)
         .get("/api/articles/3000/comments")
@@ -251,10 +221,7 @@ describe("GET/api/articles/:article_id/comments", () => {
         });
     });
   });
-});
-
-describe("GET/api/articles/:article:id comment count", () => {
-  describe("GET", () => {
+  describe("GET/api/articles/:article:id comment count", () => {
     test("Status 200: returns an article containing a comment_count property", () => {
       return request(app)
         .get("/api/articles/1")
@@ -280,10 +247,7 @@ describe("GET/api/articles/:article:id comment count", () => {
         });
     });
   });
-});
-
-describe("POST /api/articles/:article_id/comments", () => {
-  describe("POST", () => {
+  describe("POST/api/articles/:article_id/comments", () => {
     test("status 201: returns a posted comment", () => {
       const userComment = {
         username: "butter_bridge",
@@ -307,7 +271,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         });
     });
   });
-  describe("ERRORS", () => {
+  describe("ERRORS for post/api/articles/:article_id/comments", () => {
     test("status 400: returns error if no body and username are included in the comment", () => {
       const userComment = {};
       return request(app)
@@ -344,6 +308,126 @@ describe("POST /api/articles/:article_id/comments", () => {
         .expect(404)
         .then((res) => {
           expect(res.body.message).toBe(`Input not found. Please try again`);
+        });
+    });
+  });
+  // ** ANOTHER REMINDER! install "npm install --save-dev jest-sorted" to be able to test sorts! not included in Jest automatically! **
+  describe("GET /api/articles (queries)", () => {
+    test("status 200: returns an array of article objects in descending date order by default", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles).toBeSortedBy("created_at", {
+            descending: true,
+          });
+        });
+    });
+    test("status 200: returns an array of article objects in ascending date order when requested in query params", () => {
+      return request(app)
+        .get("/api/articles?order=asc")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles).toBeSortedBy("created_at", {
+            ascending: true,
+          });
+        });
+    });
+    test("status 200: returns an array of article objects srted by author in descnding order when requested in query params", () => {
+      return request(app)
+        .get("/api/articles?sort_by=author")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles).toBeSortedBy("author", {
+            descending: true,
+          });
+        });
+    });
+    test("status 200: returns an array of article objects filtered by topics when requested in query params", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles.length).toBe(11);
+          res.body.articles.forEach((article) => {
+            expect(article).toEqual(
+              expect.objectContaining({
+                topic: "mitch",
+              })
+            );
+          });
+        });
+    });
+    test("status 200: returns an array of article objects filtered by topics and sorted by author in ascending order when requested in query params", () => {
+      return request(app)
+        .get("/api/articles?sort_by=author&&order=asc&&topic=mitch")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles.length).toBe(11);
+          res.body.articles.forEach((article) => {
+            expect(article).toEqual(
+              expect.objectContaining({
+                topic: "mitch",
+              })
+            );
+          });
+          expect(res.body.articles).toBeSortedBy("author", {
+            ascending: true,
+          });
+        });
+    });
+  });
+  describe("ERRORS  /api/articles (queries)", () => {
+    test("status 400: returns bad req id sort_query is not valid", () => {
+      return request(app)
+        .get("/api/articles?sort_by=snacks")
+        .expect(400)
+        .then((res) => {
+          expect(res.body.message).toBe("Invalid sort query");
+        });
+    });
+    test("status 400: returns bad req if order query is not valid", () => {
+      return request(app)
+        .get("/api/articles?order=blankets")
+        .expect(400)
+        .then((res) => {
+          expect(res.body.message).toBe("Invalid order query");
+        });
+    });
+    test("status 400: returns bad req id topic query is not valid", () => {
+      return request(app)
+        .get("/api/articles?topic=pups")
+        .expect(400)
+        .then((res) => {
+          expect(res.body.message).toBe("Invalid topic query");
+        });
+    });
+  });
+});
+
+// ------User Tests-------
+describe("                      -------USER TESTS-------", () => {
+  describe("GET/api/users", () => {
+    test("status: 200 - should return an array of users objects with a length of 4", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.length).toEqual(4);
+        });
+    });
+    test("status: 200 - each user object should contain the property of username", () => {
+      return request(app)
+        .get("/api/users/")
+        .expect(200)
+        .then((res) => {
+          res.body.forEach((user) => {
+            expect(user).toEqual(
+              expect.objectContaining({
+                username: expect.any(String),
+              })
+            );
+          });
         });
     });
   });
