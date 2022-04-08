@@ -6,7 +6,7 @@ const {
   getArticles,
   getArticleComments,
 } = require("./controllers/articleControllers");
-const { getUserNames } = require("./controllers/userControllers");
+const { getUserNames, getApi } = require("./controllers/userControllers");
 const {
   postCommentToArticleId,
   deleteCommentById,
@@ -20,6 +20,8 @@ const {
 const app = express();
 
 app.use(express.json());
+
+app.get("/api", getApi);
 
 //-------TOPIC ENDPOINTS------
 app.get("/api/topics", getTopics);
