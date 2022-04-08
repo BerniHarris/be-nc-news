@@ -4,6 +4,7 @@ const app = require("../app");
 const db = require("../db/connection");
 const testData = require("../db/data/test-data");
 const seed = require("../db/seeds/seed");
+const endpoints = require("../endpoints.json");
 
 // ---- connect and disconnect for each test ----
 beforeEach(() => {
@@ -75,7 +76,7 @@ describe("                      -------ARTICLE TESTS-------", () => {
   describe("ERRORS for get/api/articles", () => {
     test(`status: 404 - returns a path not found message if article doesn't exist`, () => {
       return request(app)
-        .get("/api/jibberish")
+        .get("/api/sleepypup")
         .expect(404)
         .then((res) => {
           expect(res.body.message).toBe("Path not found.");
@@ -161,7 +162,7 @@ describe("                      -------ARTICLE TESTS-------", () => {
     });
     test(`status: 400 - returns invalid error message if id is not input as a number`, () => {
       return request(app)
-        .patch("/api/articles/notanumber")
+        .patch("/api/articles/stillnotanumber")
         .send({ inc_votes: 1 })
         .expect(400)
         .then((res) => {
@@ -251,7 +252,7 @@ describe("                      -------ARTICLE TESTS-------", () => {
     test("status 201: returns a posted comment", () => {
       const userComment = {
         username: "butter_bridge",
-        body: "I am finding this very easy to understand",
+        body: "Hello! Hope you're having a good day",
       };
       return request(app)
         .post("/api/articles/1/comments")
@@ -263,7 +264,7 @@ describe("                      -------ARTICLE TESTS-------", () => {
               comment_id: 19,
               article_id: 1,
               author: "butter_bridge",
-              body: "I am finding this very easy to understand",
+              body: "Hello! Hope you're having a good day",
               votes: 0,
               created_at: expect.any(String),
             })
@@ -287,7 +288,7 @@ describe("                      -------ARTICLE TESTS-------", () => {
     test("status 404: returns error if username doesn't exist", () => {
       const userComment = {
         username: "Berni-Bobs",
-        body: "Peice of cake",
+        body: "is not a user!",
       };
       return request(app)
         .post("/api/articles/2/comments")
@@ -300,7 +301,7 @@ describe("                      -------ARTICLE TESTS-------", () => {
     test("status 400: returns a not found error if the article id is valid but does not exist", () => {
       const userComment = {
         username: "butter_bridge",
-        body: "Actually, now is a little easier",
+        body: "but that's ok",
       };
       return request(app)
         .post("/api/articles/2000/comments")
@@ -458,6 +459,20 @@ describe("                      -------USER TESTS-------", () => {
               })
             );
           });
+        });
+    });
+  });
+});
+// ------Endpoint test-------
+describe("ENDPOINTS", () => {
+  describe("/api", () => {
+    test("status 200: returns JSON describing all available endpoints", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then((res) => {
+          console.log(res.body);
+          expect(res.body).toEqual(endpoints);
         });
     });
   });
