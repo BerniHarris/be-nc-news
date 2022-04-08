@@ -9,17 +9,107 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
+
   "GET /api/articles": {
-    "description": "serves an array of all topics",
+    "description": "serves an array of all articles",
     "queries": ["author", "topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
         {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": 1527695953341
+          "title": "string",
+          "topic": "string",
+          "author": "string",
+          "body": "string",
+          "created_at": "string"
+        }
+      ]
+    }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "serves an array of all topics",
+    "exampleResponse": {
+      "articles": [
+        {
+          "article": {
+            "article_id": "Number",
+            "title": "String",
+            "body": "String",
+            "topic": "String",
+            "author": "String",
+            "votes": "Number",
+            "created_at": "String",
+            "comment_count": "Number"
+          }
+        }
+      ]
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "serves a specified article",
+    "exampleRequest": {
+      "inc_votes": "number"
+    },
+    "exampleResponse": {
+      "articles": [
+        {
+          "article": {
+            " article_id": "Number",
+            " title": "String",
+            "body": "String",
+            "topic": "String",
+            "author": "String",
+            "votes": "Number",
+            "created_at": "String",
+            "comment_count": "Number"
+          }
+        }
+      ]
+    }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves an array of all comments from specified article",
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": "Number",
+          "body": "String",
+          "article_id": "Number",
+          "author": "String",
+          "votes": "Number",
+          "created_at": "String"
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "post a new comment on specified article",
+    "exampleRequest": {
+      "body": "String",
+      "username": "String"
+    },
+    "exampleResponse": {
+      "comment": [
+        {
+          "comment_id": "Number",
+          "body": "String",
+          "article_id": "Number",
+          "author": "String",
+          "votes": "Number",
+          "created_at": "String"
+        }
+      ]
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes specified comment",
+    "exampleResponse": {}
+  },
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "exampleResponse": {
+      "username": [
+        {
+          "username": "String"
         }
       ]
     }
