@@ -17,8 +17,10 @@ const {
   psqlError,
   error500,
 } = require("./errors/errors");
+const cors = require("cors");
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/api", getApi);
