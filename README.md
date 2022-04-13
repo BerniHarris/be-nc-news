@@ -35,4 +35,7 @@ Tests for the project are created using jest and all tests out comes can be view
 
 ## Minimum Versions of Technologies
 Node.js version `v16.0.0`
+
 PostgreSQL version `v12.9`
+
+Thank you for viewing :)
