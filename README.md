@@ -26,7 +26,7 @@ and
 
 To seed the databases, the run 
 
-`npm seed`
+`npm run seed`
 
 ## Testing
 Tests for the project are created using jest and all tests out comes can be viewed by running
