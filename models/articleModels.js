@@ -65,9 +65,15 @@ const checkArticleExists = (article_id) => {
 
 const fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
   if (
-    !["article_id", "author", "created_at", "title", "topic", "votes"].includes(
-      sort_by
-    ) // <--- complex query notes
+    ![
+      "article_id",
+      "title",
+      "topic",
+      "author",
+      "created_at",
+      "votes",
+      "comment_count",
+    ].includes(sort_by) // <--- complex query notes
   ) {
     return Promise.reject({ status: 400, msg: "Invalid sort query" });
   }
